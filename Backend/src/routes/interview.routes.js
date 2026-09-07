@@ -6,6 +6,6 @@ const upload = require("../middleware/file.middleware")
 
 interviewRouter.post("/",authMiddleware.authUser,upload.single("resume"),interviewController.generateInterviewController)
 
-
+interviewRouter.get("/report/:interviewId",authMiddleware.authUser,interviewController.getInterviewReportByIdController)
 
 module.exports = interviewRouter

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 
-const technicalQuestionSchema = new mongoose.model({
+const technicalQuestionSchema = new mongoose.Schema({
     question:{
         type:String,
         required:[true,"Technical question is required"]
@@ -18,7 +18,7 @@ const technicalQuestionSchema = new mongoose.model({
  _id:false
 })
 
-const behavioralQuestionSchema = new mongoose.model({
+const behavioralQuestionSchema = new mongoose.Schema({
     question:{
         type:String,
         required:[true,"Behavior question is required"]
@@ -87,6 +87,10 @@ const interviewReportSchema = new mongoose.Schema({
     user:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"users"
+    },
+    title: {
+        type:String,
+        required: [true,"Job title is required"]
     }
 },{
     timestamps:true
