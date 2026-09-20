@@ -12,12 +12,15 @@ async function generateInterviewController(req,res) {
         selfDescription,
         jobDescription
     })
-    
+
+    console.log('AI response:', JSON.stringify(interViewReportByAi, null, 2));
+
     const interviewReport = await interviewReportModel.create({
         user: req.user.id,
         resume: resumeContent.text,
         selfDescription,
         jobDescription,
+        title:interViewReportByAi.jobTitle,
         ...interViewReportByAi
     })
 

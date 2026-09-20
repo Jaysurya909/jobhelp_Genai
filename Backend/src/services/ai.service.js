@@ -1,6 +1,6 @@
-const {GoogleGenAI} = require('@google/genai')
-const {z} = require('zod')
-const {zodToJsonSchema} = require('zod-to-json-schema')
+const { GoogleGenAI } = require('@google/genai')
+const { z } = require('zod')
+const puppeteer = require('puppeteer')
 
 
 const ai = new GoogleGenAI({
@@ -21,7 +21,7 @@ const interviewReportSchema = z.object({
     })).describe("Behavioral questions that can be asked in the interview along with their intention and how to answer them"),
     skillGaps: z.array(z.object({
         skill: z.string().describe("The skill which the candidate is lacking"),
-        severity: z.enum([ "low", "medium", "high" ]).describe("The severity of this skill gap, i.e. how important is this skill for the job and how much it can impact the candidate's chances")
+        severity: z.enum(["low", "medium", "high"]).describe("The severity of this skill gap, i.e. how important is this skill for the job and how much it can impact the candidate's chances")
     })).describe("List of skill gaps in the candidate's profile along with their severity"),
     preparationPlan: z.array(z.object({
         day: z.number().describe("The day number in the preparation plan, starting from 1"),
@@ -35,17 +35,32 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
     const prompt = `Generate an interview report for a candidate with the following details:
-                        Resume: ${resume}
-                        Self Description: ${selfDescription}
-                        Job Description: ${jobDescription}
-                    `
+                    Resume: ${resume}
+                    Self Description: ${selfDescription}
+                    Job Description: ${jobDescription}
+
+                    IMPORTANT: The response MUST be a single JSON object (not an array) with a "title" field containing the job title extracted from the job description. Do not omit "title" under any circumstances.
+
+                    Example of expected shape:
+                    {
+                    "title": "Full-Stack Developer Intern",
+                    "matchScore": 85,
+                    "technicalQuestions": [...],
+                    "behavioralQuestions": [...],
+                    "skillGaps": [...],
+                    "preparationPlan": [...]
+                    }
+                    `;
+    const jsonSchema = z.toJSONSchema(interviewReportSchema);
+
+    console.log(JSON.stringify(jsonSchema, null, 2));
 
     const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(interviewReportSchema),
+            responseSchema: jsonSchema,
         }
     })
 
@@ -91,13 +106,14 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
                         The content should be ATS friendly, i.e. it should be easily parsable by ATS systems without losing important information.
                         The resume should not be so lengthy, it should ideally be 1-2 pages long when converted to PDF. Focus on quality rather than quantity and make sure to include all the relevant information that can increase the candidate's chances of getting an interview call for the given job description.
                     `
+    const jsonSchema = z.toJSONSchema(resumePdfSchema);
 
     const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(resumePdfSchema),
+            responseSchema: jsonSchema,
         }
     })
 
@@ -110,4 +126,4 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
 
 }
 
-module.exports = {generateInterviewReport,generateResumePdf}
+module.exports = { generateInterviewReport, generateResumePdf }
