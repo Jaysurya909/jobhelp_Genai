@@ -1,15 +1,16 @@
 import "../style/home.scss"
 import { useInterview } from "../hooks/useInterview"
+import { useAuth } from "../../auth/hooks/useAuth"
 import React, { useState, useRef } from 'react'
 import { useNavigate } from "react-router"
 
 const Home = () => {
 
-    const { loading, generateReport,reports } = useInterview()
+    const { loading, generateReport, reports } = useInterview()
+    const { user, handleLogout } = useAuth()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
     const resumeInputRef = useRef()
-
 
     const navigate = useNavigate()
 
@@ -19,8 +20,35 @@ const Home = () => {
         navigate(`/interview/${data._id}`)
     }
 
+    const handleLogoutClick = async () => {
+        await handleLogout()
+        navigate("/login")
+    }
+
     return (
         <div className='home-page'>
+
+            {/* Top Navigation */}
+            <nav className='home-nav'>
+                <div className='home-nav__brand'>
+                    <span>JobHelp<span className='highlight'>.AI</span></span>
+                </div>
+                <div className='home-nav__actions'>
+                    {user?.username && (
+                        <span className='home-nav__user'>
+                            Welcome, <strong>{user.username}</strong>
+                        </span>
+                    )}
+                    <button onClick={handleLogoutClick} className='button logout-button' title='Logout'>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </nav>
 
             {/* Page Header */}
             <header className='page-header'>
@@ -108,9 +136,10 @@ const Home = () => {
                     <span className='footer-info'>AI-Powered Strategy Generation &bull; Approx 30s</span>
                     <button
                         onClick={handleGenerateReport}
+                        disabled={loading}
                         className='generate-btn'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" /></svg>
-                        Generate My Interview Strategy
+                        {loading ? "Generating Strategy..." : "Generate My Interview Strategy"}
                     </button>
                 </div>
             </div>

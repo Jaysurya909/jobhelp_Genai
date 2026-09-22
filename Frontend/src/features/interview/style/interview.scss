@@ -103,10 +103,47 @@ $severity-low: #3fb950;
         }
     }
 
+    &__back {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: none;
+        border: none;
+        color: $text-muted;
+        font-size: 0.85rem;
+        cursor: pointer;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+        width: 100%;
+        transition: color 0.15s, background-color 0.15s;
+
+        &:hover {
+            color: $text-primary;
+            background-color: $bg-panel;
+        }
+    }
+
     &__icon {
         display: flex;
         align-items: center;
         flex-shrink: 0;
+    }
+
+    &__footer {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba($border-color, 0.6);
+
+        .button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     }
 }
 
