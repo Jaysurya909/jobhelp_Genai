@@ -59,8 +59,37 @@ $severity-low: #3fb950;
     justify-content: space-between;
     gap: 0.25rem;
 
+    &__back-wrap {
+        width: 100%;
+    }
 
+    &__back {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: none;
+        border: none;
+        color: $text-muted;
+        font-size: 0.85rem;
+        cursor: pointer;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 1rem;
+        border-radius: 0.5rem;
+        width: 100%;
+        transition: color 0.15s, background-color 0.15s;
 
+        &:hover {
+            color: $text-primary;
+            background-color: $bg-panel;
+        }
+    }
+
+    &__tabs {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        flex: 1;
+    }
 
     &__label {
         font-size: 0.7rem;
@@ -70,6 +99,14 @@ $severity-low: #3fb950;
         color: $text-muted;
         padding: 0 0.75rem;
         margin-bottom: 0.5rem;
+    }
+
+    &__label-short {
+        display: none;
+    }
+
+    &__btn-text-short {
+        display: none;
     }
 
     &__item {
@@ -103,34 +140,13 @@ $severity-low: #3fb950;
         }
     }
 
-    &__back {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: none;
-        border: none;
-        color: $text-muted;
-        font-size: 0.85rem;
-        cursor: pointer;
-        padding: 0.5rem 0.75rem;
-        margin-bottom: 1rem;
-        border-radius: 0.5rem;
-        width: 100%;
-        transition: color 0.15s, background-color 0.15s;
-
-        &:hover {
-            color: $text-primary;
-            background-color: $bg-panel;
-        }
-    }
-
     &__icon {
         display: flex;
         align-items: center;
         flex-shrink: 0;
     }
 
-    &__footer {
+    &__actions {
         display: flex;
         flex-direction: column;
         gap: 0.6rem;
@@ -517,7 +533,7 @@ $severity-low: #3fb950;
 
 // ── Responsive ────────────────────────────────────────────────────────────────
 
-// Tablet / small laptop (≤900px): collapse sidebar into a scrollable top bar
+// Tablet / small laptop (≤900px): collapse sidebar into a 2-tier sticky top header
 @media (max-width: 900px) {
     .interview-page {
         padding: 0;
@@ -536,73 +552,121 @@ $severity-low: #3fb950;
         display: none;
     }
 
-    // Nav becomes a single scrollable horizontal bar
-    // Do NOT use justify-content: space-between with overflow-x: auto —
-    // it pushes items off-screen. Use gap only.
+    // Modern 2-tier sticky navigation header:
+    // Row 1: Back button on the left, Action buttons (Download + Logout) on the right
+    // Row 2: All 3 section tabs (Technical, Behavioral, Road Map) cleanly displayed
     .interview-nav {
         width: 100%;
-        flex-direction: row;
+        min-height: auto;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas:
+            "back actions"
+            "tabs tabs";
         align-items: center;
         padding: 0.5rem 0.75rem;
         gap: 0.4rem;
         border-bottom: 1px solid $border-color;
-        flex-wrap: nowrap;
-        overflow-x: auto;
         position: sticky;
         top: 0;
-        z-index: 10;
+        z-index: 50;
         background-color: $bg-card;
-        scrollbar-width: none;
-        &::-webkit-scrollbar { display: none; }
 
-        // Both child divs sit in the same row, no shrinking
-        .nav-content {
+        &__back-wrap {
+            grid-area: back;
             display: flex;
             align-items: center;
-            gap: 0.35rem;
-            flex-shrink: 0;
+            width: auto;
         }
 
-        &__footer {
-            display: flex;
+        &__back {
+            width: auto;
+            margin-bottom: 0;
+            padding: 0.45rem 0.65rem !important;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            background-color: $bg-panel;
+            border: 1px solid $border-color;
+            border-radius: 0.4rem;
+            color: $text-primary;
+            display: inline-flex;
             align-items: center;
-            flex-shrink: 0;
+            gap: 0.35rem;
+
+            &:hover {
+                background-color: lighten($bg-panel, 4%);
+            }
+        }
+
+        &__actions {
+            grid-area: actions;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.4rem;
             margin-top: 0;
             padding-top: 0;
             border-top: none;
+
+            .button {
+                width: auto;
+                font-size: 0.8rem;
+                white-space: nowrap;
+                padding: 0.45rem 0.75rem !important;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+                border-radius: 0.4rem;
+            }
+        }
+
+        &__tabs {
+            grid-area: tabs;
+            display: flex;
             flex-direction: row;
-            gap: 0.4rem;
+            align-items: center;
+            gap: 0.35rem;
+            width: 100%;
+            overflow-x: auto;
+            padding-top: 0.35rem;
+            border-top: 1px solid rgba($border-color, 0.4);
+            scrollbar-width: none;
+            &::-webkit-scrollbar { display: none; }
         }
 
         &__label {
             display: none;
         }
 
-        &__back {
-            margin-bottom: 0;
-            white-space: nowrap;
-            font-size: 0.8rem;
-            flex-shrink: 0;
-            // override base .button padding
-            padding: 0.45rem 0.65rem !important;
-        }
-
         &__item {
-            font-size: 0.8rem;
-            white-space: nowrap;
-            flex-shrink: 0;
+            width: auto;
+            flex: 1;
+            min-width: max-content;
+            justify-content: center;
             padding: 0.45rem 0.65rem;
-        }
-
-        // Override the large base .button padding for footer buttons
-        &__footer .button {
             font-size: 0.8rem;
             white-space: nowrap;
-            flex-shrink: 0;
-            padding: 0.45rem 0.75rem !important;
-            display: inline-flex;
-            align-items: center;
+            border-radius: 0.4rem;
+            background-color: $bg-panel;
+            border: 1px solid $border-color;
+            color: $text-muted;
             gap: 0.4rem;
+
+            &:hover {
+                color: $text-primary;
+                background-color: lighten($bg-panel, 4%);
+            }
+
+            &--active {
+                background-color: rgba($accent, 0.15);
+                border-color: rgba($accent, 0.4);
+                color: $accent;
+
+                .interview-nav__icon svg {
+                    stroke: $accent;
+                }
+            }
         }
     }
 
@@ -613,49 +677,103 @@ $severity-low: #3fb950;
 
     .interview-sidebar {
         width: 100%;
-        flex-direction: row;
-        flex-wrap: wrap;
-        padding: 1rem 1.25rem;
-        gap: 1rem;
+        flex-direction: column;
+        align-items: center;
+        padding: 1.5rem 1rem;
+        gap: 1.25rem;
         border-top: 1px solid $border-color;
     }
 
     .match-score {
-        flex-direction: row;
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 1rem;
+        text-align: center;
+        gap: 0.6rem;
+        width: 100%;
 
-        &__label { align-self: center; }
-        &__sub    { text-align: left;  }
+        &__label {
+            align-self: center;
+            text-align: center;
+        }
+
+        &__ring {
+            margin: 0.25rem auto;
+        }
+
+        &__sub {
+            text-align: center;
+        }
     }
 
-    .sidebar-divider { display: none; }
+    .sidebar-divider {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        height: 1px;
+        background-color: rgba($border-color, 0.7);
+    }
 
     .skill-gaps {
-        flex: 1;
-        min-width: 200px;
+        width: 100%;
+        max-width: 450px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6rem;
+
+        &__label {
+            align-self: center;
+            text-align: center;
+        }
+
+        &__list {
+            justify-content: center;
+        }
     }
 }
 
-// Mobile (≤600px) — just tighten spacing, keep everything visible
+// Mobile (≤600px) — responsive labels and compact spacing
 @media (max-width: 600px) {
     .interview-nav {
         padding: 0.4rem 0.5rem;
-        gap: 0.25rem;
+        gap: 0.3rem;
 
         &__back {
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             padding: 0.35rem 0.5rem !important;
         }
 
-        &__item {
-            font-size: 0.72rem;
-            padding: 0.35rem 0.5rem;
+        &__actions .button {
+            font-size: 0.75rem;
+            padding: 0.35rem 0.55rem !important;
         }
 
-        &__footer .button {
-            font-size: 0.72rem;
-            padding: 0.35rem 0.55rem !important;
+        &__label-full {
+            display: none;
+        }
+
+        &__label-short {
+            display: inline;
+        }
+
+        &__btn-text-full {
+            display: none;
+        }
+
+        &__btn-text-short {
+            display: inline;
+        }
+
+        &__tabs {
+            padding-top: 0.3rem;
+            gap: 0.25rem;
+        }
+
+        &__item {
+            font-size: 0.74rem;
+            padding: 0.38rem 0.45rem;
+            gap: 0.25rem;
         }
     }
 
@@ -672,18 +790,31 @@ $severity-low: #3fb950;
     }
 
     .interview-sidebar {
-        padding: 1rem;
-        flex-direction: column;
+        padding: 1.25rem 0.75rem;
+        gap: 1rem;
     }
 
     .match-score {
-        flex-direction: column;
-        align-items: flex-start;
+        &__ring {
+            width: 82px;
+            height: 82px;
+        }
 
-        &__sub { text-align: left; }
+        &__value {
+            font-size: 1.45rem;
+        }
     }
 
     .roadmap-day {
         padding-left: 2.75rem;
+    }
+}
+
+// Ultra-compact mobile (≤400px)
+@media (max-width: 400px) {
+    .interview-nav {
+        &__logout-text {
+            display: none;
+        }
     }
 }
