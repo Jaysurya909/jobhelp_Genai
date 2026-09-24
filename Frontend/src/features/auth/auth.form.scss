@@ -5,9 +5,12 @@ main{
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 1.5rem;
 
     .form-container{
         min-width: 350px;
+        width: 100%;
+        max-width: 420px;
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -31,6 +34,7 @@ main{
             padding-inline: 1rem;
             padding-block: 0.75rem;
             border-radius: 0.75rem;
+            font-size: 1rem; // prevents iOS zoom on focus
         }
 
     }
@@ -38,5 +42,17 @@ main{
     a{
         color: #e1034d;
         text-decoration: none;
+    }
+
+    // ── Mobile ────────────────────────────────────────────────────────────────
+    @media (max-width: 480px) {
+        padding: 1rem;
+        align-items: flex-start;
+        padding-top: 3rem;
+
+        .form-container {
+            min-width: unset;
+            width: 100%;
+        }
     }
 }

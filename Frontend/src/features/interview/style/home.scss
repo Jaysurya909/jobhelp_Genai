@@ -408,3 +408,125 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
         }
     }
 }
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+
+// Tablet (≤768px): stack the two panels vertically
+@media (max-width: 768px) {
+    .home-page {
+        padding: 1.25rem 1rem 2.5rem;
+        gap: 1.5rem;
+    }
+
+    .home-nav {
+        max-width: 100%;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+
+        &__actions {
+            gap: 0.75rem;
+        }
+
+        &__user {
+            display: none; // hide "Welcome, X" on small screens to save space
+        }
+    }
+
+    .page-header {
+        h1 {
+            font-size: 1.6rem;
+        }
+    }
+
+    .interview-card {
+        max-width: 100%;
+
+        &__body {
+            flex-direction: column; // stack left & right panels
+            min-height: unset;
+        }
+
+        &__footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+            text-align: center;
+
+            .generate-btn {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    }
+
+    .panel-divider {
+        width: 100%;
+        height: 1px;
+    }
+
+    .panel {
+        padding: 1.25rem;
+    }
+
+    .recent-reports {
+        max-width: 100%;
+
+        .reports-list {
+            flex-direction: column;
+
+            .report-item {
+                flex: unset;
+                width: 100%;
+            }
+        }
+    }
+}
+
+// Mobile (≤480px)
+@media (max-width: 480px) {
+    .home-page {
+        padding: 1rem 0.75rem 2rem;
+        gap: 1rem;
+    }
+
+    .home-nav {
+        padding: 0.25rem 0 0.75rem;
+
+        &__brand {
+            font-size: 1.1rem;
+        }
+    }
+
+    .page-header {
+        h1 {
+            font-size: 1.35rem;
+        }
+
+        p {
+            font-size: 0.875rem;
+        }
+    }
+
+    .panel {
+        padding: 1rem;
+
+        &__textarea {
+            font-size: 1rem; // prevents iOS auto-zoom
+        }
+    }
+
+    .dropzone {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .generate-btn {
+        font-size: 0.875rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .page-footer {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
