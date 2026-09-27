@@ -257,9 +257,53 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
         background-color: rgba($accent, 0.05);
     }
 
+    &--dragging {
+        border-color: $accent;
+        background-color: rgba($accent, 0.1);
+    }
+
+    &--uploaded {
+        border-style: solid;
+        border-color: rgba(#3fb950, 0.4);
+        background-color: rgba(#3fb950, 0.05);
+        padding: 1.15rem 1rem;
+
+        &:hover {
+            border-color: rgba(#3fb950, 0.7);
+            background-color: rgba(#3fb950, 0.08);
+        }
+    }
+
+    &__uploaded-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 0.85rem;
+    }
+
     &__icon {
         color: $accent;
         margin-bottom: 0.25rem;
+
+        &--uploaded {
+            color: #3fb950;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(#3fb950, 0.15);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            flex-shrink: 0;
+        }
+    }
+
+    &__file-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        flex: 1;
+        min-width: 0;
     }
 
     &__title {
@@ -267,6 +311,51 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
         font-weight: 500;
         color: $text-primary;
         margin: 0;
+
+        &--uploaded {
+            font-weight: 600;
+            color: #3fb950;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+    }
+
+    &__filename {
+        font-size: 0.8rem;
+        color: $text-primary;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__filesize {
+        font-size: 0.7rem;
+        color: $text-muted;
+    }
+
+    &__remove-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background-color: rgba($accent, 0.12);
+        border: 1px solid rgba($accent, 0.25);
+        color: $accent;
+        padding: 0.35rem 0.65rem;
+        border-radius: 0.4rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+        font-family: $font-stack;
+
+        &:hover {
+            background-color: $accent;
+            color: #ffffff;
+        }
     }
 
     &__subtitle {

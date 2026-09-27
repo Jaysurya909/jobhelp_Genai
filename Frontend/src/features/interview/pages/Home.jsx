@@ -10,14 +10,60 @@ const Home = () => {
     const { user, handleLogout } = useAuth()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
+    const [ resumeFile, setResumeFile ] = useState(null)
+    const [ isDragging, setIsDragging ] = useState(false)
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
 
+    const handleResumeChange = (e) => {
+        if (e.target.files && e.target.files[ 0 ]) {
+            setResumeFile(e.target.files[ 0 ])
+        }
+    }
+
+    const handleRemoveResume = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setResumeFile(null)
+        if (resumeInputRef.current) {
+            resumeInputRef.current.value = ""
+        }
+    }
+
+    const handleDragOver = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragging(true)
+    }
+
+    const handleDragLeave = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragging(false)
+    }
+
+    const handleDrop = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragging(false)
+        if (e.dataTransfer.files && e.dataTransfer.files[ 0 ]) {
+            const file = e.dataTransfer.files[ 0 ]
+            setResumeFile(file)
+            if (resumeInputRef.current) {
+                const dataTransfer = new DataTransfer()
+                dataTransfer.items.add(file)
+                resumeInputRef.current.files = dataTransfer.files
+            }
+        }
+    }
+
     const handleGenerateReport = async () => {
-        const resumeFile = resumeInputRef.current.files[ 0 ]
-        const data = await generateReport({ jobDescription, selfDescription, resumeFile })
-        navigate(`/interview/${data._id}`)
+        const fileToSend = resumeFile || resumeInputRef.current?.files?.[ 0 ]
+        const data = await generateReport({ jobDescription, selfDescription, resumeFile: fileToSend })
+        if (data?._id) {
+            navigate(`/interview/${data._id}`)
+        }
     }
 
     const handleLogoutClick = async () => {
@@ -96,13 +142,62 @@ const Home = () => {
                                 Upload Resume
                                 <span className='badge badge--best'>Best Results</span>
                             </label>
-                            <label className='dropzone' htmlFor='resume'>
-                                <span className='dropzone__icon'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
-                                </span>
-                                <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
-                                <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
-                                <input ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
+                            <label
+                                className={`dropzone ${resumeFile ? 'dropzone--uploaded' : ''} ${isDragging ? 'dropzone--dragging' : ''}`}
+                                htmlFor='resume'
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                            >
+                                {resumeFile ? (
+                                    <div className='dropzone__uploaded-content'>
+                                        <span className='dropzone__icon dropzone__icon--uploaded'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                <path d="m9 15 2 2 4-4"></path>
+                                            </svg>
+                                        </span>
+                                        <div className='dropzone__file-details'>
+                                            <p className='dropzone__title dropzone__title--uploaded'>PDF Uploaded</p>
+                                            <p className='dropzone__filename' title={resumeFile.name}>{resumeFile.name}</p>
+                                            <span className='dropzone__filesize'>
+                                                {resumeFile.size / (1024 * 1024) >= 1
+                                                    ? `${(resumeFile.size / (1024 * 1024)).toFixed(2)} MB`
+                                                    : `${(resumeFile.size / 1024).toFixed(1)} KB`}
+                                            </span>
+                                        </div>
+                                        <button
+                                            type='button'
+                                            className='dropzone__remove-btn'
+                                            onClick={handleRemoveResume}
+                                            title='Remove file'
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                            <span>Remove</span>
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <span className='dropzone__icon'>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
+                                        </span>
+                                        <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
+                                        <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
+                                    </>
+                                )}
+                                <input
+                                    ref={resumeInputRef}
+                                    hidden
+                                    type='file'
+                                    id='resume'
+                                    name='resume'
+                                    accept='.pdf,.docx'
+                                    onChange={handleResumeChange}
+                                />
                             </label>
                         </div>
 
@@ -126,7 +221,7 @@ const Home = () => {
                             <span className='info-box__icon'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" stroke="#1a1f27" strokeWidth="2" /><line x1="12" y1="16" x2="12.01" y2="16" stroke="#1a1f27" strokeWidth="2" /></svg>
                             </span>
-                            <p>Either a <strong>Resume</strong> and a <strong>Self Description</strong> is required to generate a personalized plan.</p>
+                            <p><strong>Resume</strong> and a <strong>Self Description</strong> is required to generate a personalized plan.</p>
                         </div>
                     </div>
                 </div>
