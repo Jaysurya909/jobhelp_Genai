@@ -29,7 +29,7 @@ const NAV_ITEMS = [
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 const QuestionCard = ({ item, index }) => {
-    const [ open, setOpen ] = useState(false)
+    const [open, setOpen] = useState(false)
     return (
         <div className='q-card'>
             <div className='q-card__header' onClick={() => setOpen(o => !o)}>
@@ -55,7 +55,7 @@ const QuestionCard = ({ item, index }) => {
     )
 }
 
-const RoadMapDay = ({ day , onToggle}) => (
+const RoadMapDay = ({ day, onToggle }) => (
     <div className='roadmap-day'>
         <div className='roadmap-day__header'>
             <span className='roadmap-day__badge'>Day {day.day}</span>
@@ -83,9 +83,27 @@ const RoadMapDay = ({ day , onToggle}) => (
     </div>
 )
 
+const RoadmapProgress = ({ plan }) => {
+    const total = plan.length
+    const completed = plan.filter(d => d.completed).length
+    const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
+
+    return (
+        <div className='roadmap-progress'>
+            <div className='roadmap-progress__bar'>
+                <div
+                    className='roadmap-progress__fill'
+                    style={{ width: `${percent}%` }}
+                />
+            </div>
+            <span className='roadmap-progress__text'>{completed}/{total} days</span>
+        </div>
+    )
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
-    const [ activeNav, setActiveNav ] = useState('technical')
+    const [activeNav, setActiveNav] = useState('technical')
     const { report, getReportById, loading, getResumePdf, toggleDay } = useInterview()
     const { handleLogout } = useAuth()
     const { interviewId } = useParams()
@@ -100,7 +118,7 @@ const Interview = () => {
         if (interviewId) {
             getReportById(interviewId)
         }
-    }, [ interviewId ])
+    }, [interviewId])
 
 
 
@@ -201,13 +219,16 @@ const Interview = () => {
 
                     {activeNav === 'roadmap' && (
                         <section>
-                            <div className='content-header'>
-                                <h2>Preparation Road Map</h2>
-                                <span className='content-header__count'>{report.preparationPlan.length}-day plan</span>
+                            <div className='content-header content-header--roadmap'>
+                                <div className='content-header__title-group'>
+                                    <h2>Preparation Road Map</h2>
+                                    <span className='content-header__count'>{report.preparationPlan.length}-day plan</span>
+                                </div>
+                                <RoadmapProgress plan={report.preparationPlan} />
                             </div>
                             <div className='roadmap-list'>
                                 {report.preparationPlan.map((day) => (
-                                    <RoadMapDay key={day.day} day={day} onToggle={toggleDay}/>
+                                    <RoadMapDay key={day.day} day={day} onToggle={toggleDay} />
                                 ))}
                             </div>
                         </section>

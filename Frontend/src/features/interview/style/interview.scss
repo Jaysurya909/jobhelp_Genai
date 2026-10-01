@@ -208,6 +208,16 @@ $severity-low: #3fb950;
         border-radius: 2rem;
         border: 1px solid $border-color;
     }
+
+    &__title-group {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+    }
+
+    &--roadmap {
+        justify-content: space-between;
+    }
 }
 
 // ── Question Cards ────────────────────────────────────────────────────────────
@@ -458,6 +468,43 @@ $severity-low: #3fb950;
         border-radius: 50%;
         background-color: $text-muted;
         margin-top: 8px;
+    }
+}
+
+// top of roadmap section
+.content-header--roadmap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 1rem;
+}
+
+.roadmap-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    &__bar {
+        width: 120px;
+        height: 6px;
+        border-radius: 1rem;
+        background-color: rgba($text-muted, 0.2);
+        overflow: hidden;
+    }
+
+    &__fill {
+        height: 100%;
+        background-color: $accent;
+        border-radius: 1rem;
+        transition: width 0.3s ease;
+    }
+
+    &__text {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: $text-muted;
+        white-space: nowrap;
     }
 }
 
