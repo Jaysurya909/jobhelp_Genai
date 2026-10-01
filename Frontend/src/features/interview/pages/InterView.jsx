@@ -55,11 +55,22 @@ const QuestionCard = ({ item, index }) => {
     )
 }
 
-const RoadMapDay = ({ day }) => (
+const RoadMapDay = ({ day , onToggle}) => (
     <div className='roadmap-day'>
         <div className='roadmap-day__header'>
             <span className='roadmap-day__badge'>Day {day.day}</span>
             <h3 className='roadmap-day__focus'>{day.focus}</h3>
+            <button
+                className={`roadmap-day__toggle ${day.completed ? 'roadmap-day__toggle--done' : ''}`}
+                onClick={() => onToggle(day.day)}
+            >
+                {day.completed ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                ) : (
+                    <span className='roadmap-day__toggle-dot' />
+                )}
+                <span>{day.completed ? 'Completed' : 'Mark complete'}</span>
+            </button>
         </div>
         <ul className='roadmap-day__tasks'>
             {day.tasks.map((task, i) => (
@@ -75,7 +86,7 @@ const RoadMapDay = ({ day }) => (
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
     const [ activeNav, setActiveNav ] = useState('technical')
-    const { report, getReportById, loading, getResumePdf } = useInterview()
+    const { report, getReportById, loading, getResumePdf, toggleDay } = useInterview()
     const { handleLogout } = useAuth()
     const { interviewId } = useParams()
     const navigate = useNavigate()
@@ -196,7 +207,7 @@ const Interview = () => {
                             </div>
                             <div className='roadmap-list'>
                                 {report.preparationPlan.map((day) => (
-                                    <RoadMapDay key={day.day} day={day} />
+                                    <RoadMapDay key={day.day} day={day} onToggle={toggleDay}/>
                                 ))}
                             </div>
                         </section>

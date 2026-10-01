@@ -82,4 +82,27 @@ async function generateResumePdfController(req, res) {
     res.send(pdfBuffer)
 }
 
-module.exports = {generateInterviewController,getInterviewReportByIdController,getAllInterviewReportsController,generateResumePdfController}
+async function updateCheckList(req,res) {
+
+    try {
+        
+        const {planId,dayNumber} = req.params;
+
+        const plan = await interviewReportModel.findOne({_id:planId});
+        if (!plan) return res.status(404).json({ message: 'Report not found' });
+
+        const dayEntry = plan.preparationPlan.find(d => d.day === Number(dayNumber));
+        if (!dayEntry) return res.status(404).json({ message: 'Day entry not found' });
+
+        dayEntry.completed = !dayEntry.completed
+        await plan.save();
+        
+        res.status(200).json({success:true , completed:dayEntry.completed});
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Failed to toggle day status' });
+    }
+
+}
+
+module.exports = {generateInterviewController,getInterviewReportByIdController,getAllInterviewReportsController,generateResumePdfController,updateCheckList}

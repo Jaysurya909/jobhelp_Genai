@@ -43,3 +43,9 @@ export const generateResumePdf = async ({ interviewReportId }) => {
 
     return response.data
 }
+
+export const toggleDayComplete = async (interviewReportId, dayNumber) => {
+    const response = await api.patch(`/api/interview/plan/${interviewReportId}/day/${dayNumber}/toggle`)
+
+    return response.data
+}

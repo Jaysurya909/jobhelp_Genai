@@ -1,4 +1,4 @@
-import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf } from "../services/interview.api"
+import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf, toggleDayComplete } from "../services/interview.api"
 import { useContext, useEffect } from "react"
 import { InterviewContext } from "../interview.context"
 import { useParams } from "react-router"
@@ -79,6 +79,22 @@ export const useInterview = () => {
         }
     }
 
+    const toggleDay = async (dayNumber) => {
+        try {
+            const data = await toggleDayComplete(report._id, dayNumber)
+
+            setReport(prev => ({
+                ...prev,
+                preparationPlan: prev.preparationPlan.map(day =>
+                    day.day === dayNumber ? { ...day, completed: data.completed } : day
+                ),
+            }))
+        } catch (err) {
+            console.error('Failed to toggle day completion:', err)
+        }
+    }
+
+
     useEffect(() => {
         if (interviewId) {
             getReportById(interviewId)
@@ -88,6 +104,6 @@ export const useInterview = () => {
     }, [interviewId])
 
 
-    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf }
+    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf, toggleDay }
 
 }

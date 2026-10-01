@@ -61,7 +61,11 @@ const preparationPlanSchema = new mongoose.Schema({
     tasks:[{
         type:String,
         required:[true,"Task is required"]
-    }]
+    }],
+    completed:{
+        type:Boolean,
+        default:false
+    }
 })
 
 const interviewReportSchema = new mongoose.Schema({
